@@ -51,6 +51,18 @@ async function run() {
       const result = await userCollection.insertOne(user);
       res.send(result);
     })
+
+    app.patch('/users/admin/:id',async(req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updateDoc={
+        $set:{
+role:admin
+        }
+      }
+      const result = await userCollection.updateOne(filter,updateDoc);
+      res.send(result);
+    })
    
     // menu collection api
     app.get('/menu',async(req,res)=>{
