@@ -2,7 +2,7 @@ const express = require('express');
 const app =express()
 const cors = require('cors');
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 require('dotenv').config()
 // middleware
@@ -46,13 +46,29 @@ async function run() {
    const result =await menuCollection.find().toArray();
    res.send(result);
    })
+  //  cart collection api
+  app.get('/carts',async(req,res)=>{
+    const email = req.query.email;
+    if(!email){
+      res.send([]);
+    }
+    const query = {email:email};
+    const result = await cartsCollection.find(query).toArray();
+    res.send(result);
+  })
    app.post('/carts',async(req,res)=>{
     const item = req.body;
     console.log(item);
     const result = await cartsCollection.insertOne(item);
     res.send(result);
-
    })
+  //  delet api
+  app.delete('/carts/:id',async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)};
+    const result = await cartsCollection.deleteOne(query);
+    res.send(result);
+  })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
